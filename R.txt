@@ -1,0 +1,105 @@
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre7')
+
+library(rJava)
+
+library(rattle)
+
+rattle()
+
+library(Hmisc)
+
+GGOBI:
+--------------------------------
+library(rggobi); ggobi(mtcars)
+
+=============================
+    LEITURA DE ARQUIVOS
+=============================
+
+fname <- system.file("csv", "weather.csv", package="rattle") 
+weather <- read.csv(fname, encoding="UTF-8")
+
+>> OU
+
+weather <- read.csv("file:.../weather.csv", na.strings=c(".", "NA", "", "?"),
+strip.white=TRUE) # na.strings para maneiras de representar valores não encontrados #
+
+>> OU
+
+setwd("F:/Users/uni17967/Desktop/Scatter_03-11-17")
+dados <-readXL("F:/Users/uni17967/Desktop/Scatter_03-11-17/BASES ESTUDOS DE CORRELAÇÃO1.xlsx", rownames=FALSE, header=TRUE, na="", sheet="DISPOSITIVOS", stringsAsFactors=TRUE)
+
+=============================
+  CRIAR OBJETO ENVIRONMENT
+=============================  
+
+en <- new.env()
+
+=============================
+TEMPLATE PARA ENVIRONMENT
+=============================
+
+> library(rpart)
+
+# Cria objeto environment weatherDS #
+> weatherDS <- new.env()
+> evalq({
+data <- weather
+nobs <- nrow(data)
+vars <- c(2:22, 24)
+form <- formula(RainTomorrow ~ .)
+target <- all.vars(form)[1]
+train <- sample(nobs, 0.7*nobs)
+}, weatherDS)
+
+# Cria environemtn weatherRPART como filho de weatherDS #
+> weatherRPART <- new.env(parent=weatherDS)
+> evalq({
+model <- rpart(formula=form, data=data[train, vars])
+predictions <- predict(model, data[-train, vars])
+}, weatherRPART)
+
+=============================
+  REFERÊNCIAS DE VARIÁVEIS
+=============================
+
+> vars <- c("Evaporation", "Sunshine")
+> weather[100:105, vars]
+Evaporation Sunshine
+100 5.4 5.6
+101 4.0 8.9
+102 5.8 9.6
+103 5.0 10.7
+104 6.6 5.9
+105 3.2 0.4
+
+=============================
+            ODBC
+=============================
+# Dica: página 86 para leituras a partir de várias fontes de dados #
+library(RODBC)
+channel <- odbcConnect("dw", uid="uni18883", pwd="abc123", believeNRows = FALSE)
+query <- "<texto da query>" 
+resultado <- sqlQuery(channel, query, rows_at_time = 1, believeNRows = FALSE)
+
+=============================
+   ANÁLISE DE CORRELAÇÃO
+=============================
+
+require(plotrix)
+
+pdf("DISPOSITIVOS.pdf", width=16, height=16)
+
+# Customize upper panel
+upper.panel<-function(x, y){
+  points(x,y, pch=19)
+  r <- round(cor(x, y,use="pairwise.complete.obs"), digits=2)
+  txt <- paste0("R = ", r)
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  text(0.5, 0.9, txt)
+}
+pairs(dados[,3:4], lower.panel = NULL, upper.panel = upper.panel)
+
+dev.off()
+

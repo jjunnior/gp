@@ -1,0 +1,180 @@
+##### BASE DO SAFE ######
+
+#Leitura dos dados - modificar para o nome do arquivo desejado
+dados <- readStata("F:/Users/uni17967/Desktop/Scatter_03-11-17/BASE_COMPLETA_GUIA_CONSOL_NOVEMBRO_17.dta", convert.dates=TRUE, stringsAsFactors=TRUE, rownames=FALSE)
+
+# Separação dos dados por especialidade - aqui é possível iterar as separações pelos códigos de especialidades - 13 é "Clínica médica"
+dados<-dados[dados$ID_ESPECIALIDADE==13,]
+# Separação da data de competência e conversão no formato ymd
+dados$DAT_COMPETENCIA<-substr(dados$DAT_COMPETENCIA,start=1,stop=10)
+library(lubridate)
+dados$DAT_COMPETENCIA<-ymd(dados$DAT_COMPETENCIA)
+
+#Cria colunas de ano e mês e depois separa ano 2017, mês a partor de abril
+dados$ano<-year(dados$DAT_COMPETENCIA)
+dados$mes<-month(dados$DAT_COMPETENCIA)
+dados<-dados[dados$ano==2017,]
+dados<-dados[dados$mes>=4,]
+#Converte o mês para dado numérico
+dados$mes<-as.numeric(dados$mes)
+
+#Separa apenas as colunas que interessam
+dados<-data.frame(dados$COD_INDICADOR, dados$DAT_COMPETENCIA, dados$NUM_COMPETENCIA, dados$NUM_CRM, dados$ID_ESPECIALIDADE, dados$VLR_NUMERADOR, dados$VLR_DENOMINADOR, dados$VLR_RESULTADO,dados$mes)
+
+# Os seguintes indicadores não são necessários
+dados<-dados[dados$dados.COD_INDICADOR!="IQA01",]
+dados<-dados[dados$dados.COD_INDICADOR!="IQA02",]
+dados<-dados[dados$dados.COD_INDICADOR!="I0033",]
+dados<-dados[dados$dados.COD_INDICADOR!="I0270",]
+dados<-dados[dados$dados.COD_INDICADOR!="I1104",]
+dados<-dados[dados$dados.COD_INDICADOR!="I1105",]
+dados<-dados[dados$dados.COD_INDICADOR!="I1191",]
+dados<-dados[dados$dados.COD_INDICADOR!="I1192",]
+dados<-dados[dados$dados.COD_INDICADOR!="I1281",]
+
+# Aqui separa apenas os indicadores que fazem sentido para a análise
+dados<-dados[dados$dados.COD_INDICADOR=="I0083"| dados$dados.COD_INDICADOR=="I0055"| dados$dados.COD_INDICADOR=="I0002"| dados$dados.COD_INDICADOR=="I0056"
+| dados$dados.COD_INDICADOR=="I0231"| dados$dados.COD_INDICADOR=="I0021"| dados$dados.COD_INDICADOR=="I0035"| dados$dados.COD_INDICADOR=="I0081"
+| dados$dados.COD_INDICADOR=="I0085"| dados$dados.COD_INDICADOR=="I0255"| dados$dados.COD_INDICADOR=="I0252"| dados$dados.COD_INDICADOR=="I0034"
+| dados$dados.COD_INDICADOR=="I0084"| dados$dados.COD_INDICADOR=="I0057"| dados$dados.COD_INDICADOR=="I0032"| dados$dados.COD_INDICADOR=="I0004",]
+
+
+##### FIM BASE DO SAFE ######
+
+## Análise restrita ao mês de abril
+
+abril<-dados[dados$dados.mes==4,]
+
+abril<-abril[!is.na(abril$dados.COD_INDICADOR),]
+
+a2<-data.frame(abril$dados.COD_INDICADOR,abril$dados.NUM_CRM,abril$dados.VLR_RESULTADO)
+
+abril<-a2%>% spread(abril.dados.COD_INDICADOR, abril.dados.VLR_RESULTADO)
+
+abril$mes<-4
+
+colnames(abril)[1] <- "CRM"
+
+# ->>> Plotagem do gráfico - colocar aqui o gráfico gerado no Rattle
+
+## Análise restrita ao mês de maio
+
+maio<-dados[dados$dados.mes==5,]
+
+maio<-maio[!is.na(maio$dados.COD_INDICADOR),]
+
+a2maio<-data.frame(maio$dados.COD_INDICADOR,maio$dados.NUM_CRM,maio$dados.VLR_RESULTADO)
+
+maio<-a2maio%>% spread(maio.dados.COD_INDICADOR, maio.dados.VLR_RESULTADO)
+
+maio$mes<-5
+
+colnames(maio)[1] <- "CRM"
+
+## Análise restrita ao mês de junho
+
+junho<-dados[dados$dados.mes==6,]
+
+junho<-junho[!is.na(junho$dados.COD_INDICADOR),]
+
+a2junho<-data.frame(junho$dados.COD_INDICADOR,junho$dados.NUM_CRM,junho$dados.VLR_RESULTADO)
+
+junho<-a2junho%>% spread(junho.dados.COD_INDICADOR, junho.dados.VLR_RESULTADO)
+
+junho$mes<-6
+
+colnames(junho)[1] <- "CRM"
+
+## Análise restrita ao mês de julho
+
+julho<-dados[dados$dados.mes==7,]
+
+julho<-julho[!is.na(julho$dados.COD_INDICADOR),]
+
+a2julho<-data.frame(julho$dados.COD_INDICADOR,julho$dados.NUM_CRM,julho$dados.VLR_RESULTADO)
+
+julho<-a2julho%>% spread(julho.dados.COD_INDICADOR, julho.dados.VLR_RESULTADO)
+
+julho$mes<-7
+
+colnames(julho)[1] <- "CRM"
+
+## Análise restrita ao mês de agosto
+
+agosto<-dados[dados$dados.mes==8,]
+
+agosto<-agosto[!is.na(agosto$dados.COD_INDICADOR),]
+
+a2agosto<-data.frame(agosto$dados.COD_INDICADOR,agosto$dados.NUM_CRM,agosto$dados.VLR_RESULTADO)
+
+agosto<-a2agosto%>% spread(agosto.dados.COD_INDICADOR, agosto.dados.VLR_RESULTADO)
+
+agosto$mes<-8
+
+colnames(agosto)[1] <- "CRM"
+
+## Análise restrita ao mês de setembro
+
+setembro<-dados[dados$dados.mes==9,]
+
+setembro<-setembro[!is.na(setembro$dados.COD_INDICADOR),]
+
+a2setembro<-data.frame(setembro$dados.COD_INDICADOR,setembro$dados.NUM_CRM,setembro$dados.VLR_RESULTADO)
+
+setembro<-a2setembro%>% spread(setembro.dados.COD_INDICADOR, setembro.dados.VLR_RESULTADO)
+
+setembro$mes<-9
+
+colnames(setembro)[1] <- "CRM"
+
+#### Transformações requeridas devido ao fato de o mês de Junho ter menos colunas que os demais meses
+
+#Junta todas os dataframes exceto junho em apenas um
+esp13<-rbind(abril,maio,julho,agosto,setembro)
+
+#Data frame sem as colunas a mais de Junho
+sem<-esp13[,-c(2,7,17)]
+
+#Data frame com as colunas a mais de Junho
+com<-esp13[,c(1,2,7,17,18)]
+
+#Cria uma coluna no dataframe "com" que concatena o CRM e o mês
+com$CRM_T<-paste(com$CRM,com$mes)
+
+#Junta os dataframes "sem" e "junho" em apenas 1
+meses<-rbind(sem,junho)
+
+#Cria uma coluna no dataframe "meses" que concatena o CRM e o mês
+meses$CRM_T<-paste(meses$CRM,meses$mes)
+
+#Junta os datasets "meses" e "com" utilizando como critério a nova coluna CRM_T
+guia<-left_join(meses, com, by = "CRM_T")
+
+#Por fim, salva o dataset final gerado
+setwd("F:/Users/uni17967/Desktop/Scatter_03-11-17")
+write.table(guia,file="especialidade13abril4.csv",sep=";",row.names=FALSE,dec=",")
+
+######## Plotagem do gráfico de correlação - substituir aqui pelo gráfico gerado no Rattle
+require(plotrix)
+
+pdf("CORRELACAO.pdf", width=16, height=16)
+
+# Customiza o painel superior
+upper.panel<-function(x, y){
+  points(x,y, pch=19)
+  r <- round(cor(x, y,use="pairwise.complete.obs"), digits=2)
+  txt <- paste0("R = ", r)
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  text(0.5, 0.9, txt)
+}
+
+pairs(guia[,c(2:14,18:20)], lower.panel = NULL, upper.panel = upper.panel)
+dev.off()
+
+######## Recorte de apenas abril
+ab<-guia[guia$mes.y==4,]
+ab<-ab[1:576,]
+pairs(ab[,c(2:14,18:20], lower.panel = NULL, upper.panel = upper.panel)
+
+
